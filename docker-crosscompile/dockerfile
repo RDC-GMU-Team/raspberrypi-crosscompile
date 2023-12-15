@@ -1,0 +1,65 @@
+# Raspberry pi cross compile image
+
+FROM debian:bookworm
+
+LABEL author="Joseph Prince Mathew" email="josephprincemathew@outlook.com"
+
+# Cross Compile Environment 
+ENV CROSS_TRIPLE arm-linux-gnueabihf
+ENV C_COMPILER_ARM_LINUX=$CROSS_TRIPLE-gcc
+ENV CXX_COMPILER_ARM_LINUX=$CROSS_TRIPLE-g++
+
+# Cross Compile Toolchiain file
+ENV CROSS_INSTALL_PREFIX=/usr/$CROSS_TRIPLE
+ENV CROSS_TOOLCHAIN=/arm.toolchain.cmake
+RUN echo "set(CMAKE_SYSTEM_NAME Linux)" >> $CROSS_TOOLCHAIN && \
+  echo "set(CMAKE_SYSTEM_PROCESSOR arm)" >> $CROSS_TOOLCHAIN && \
+  echo "set(CMAKE_C_COMPILER /usr/bin/$C_COMPILER_ARM_LINUX)" >> $CROSS_TOOLCHAIN && \
+  echo "set(CMAKE_CXX_COMPILER /usr/bin/$CXX_COMPILER_ARM_LINUX)" >> $CROSS_TOOLCHAIN && \
+  echo "set(CMAKE_PREFIX_PATH $CROSS_INSTALL_PREFIX)" >> $CROSS_TOOLCHAIN
+
+# Install build tools
+RUN apt-get update && \
+  apt-get --no-install-recommends install -y autoconf \
+    tzdata \
+    automake \
+    build-essential \
+    gcc \
+    g++ \
+    ca-certificates \
+    curl \
+    # C/C++ cross compilers
+    gcc-$CROSS_TRIPLE \
+    g++-$CROSS_TRIPLE \
+    cmake \
+    make \
+    gdb \
+    git \
+    gnupg \
+    libssl-dev \
+    openssh-client \
+    pkg-config \
+    rsync \
+    tar \
+    zlib1g \
+    zlib1g-dev \
+    python3 \
+    software-properties-common \
+    wget && \
+  rm -rf /var/lib/apt/lists/*
+
+# Cross compiler environment variable setup
+ENV CROSS_ROOT ${XCC_PREFIX}/${CROSS_TRIPLE}
+ENV AS=/bin/${CROSS_TRIPLE}-as \
+    AR=/bin/${CROSS_TRIPLE}-ar \
+    CC=/bin/${CROSS_TRIPLE}-gcc-8 \
+    CPP=/bin/${CROSS_TRIPLE}-cpp-8 \
+    CXX=/bin/${CROSS_TRIPLE}-g++-8 \
+    LD=/bin/${CROSS_TRIPLE}-ld
+ENV PKG_CONFIG_PATH /usr/lib/${CROSS_TRIPLE}/pkgconfig
+ENV ARCH arm
+
+# User setup
+ARG UID=1000
+RUN useradd -m -u ${UID} -s /bin/bash builder
+USER builder
