@@ -1,0 +1,5 @@
+sysroot/etc/
+sysroot/usr/
+sysroot/lib/
+sysroot/opt/
+toolchain/
