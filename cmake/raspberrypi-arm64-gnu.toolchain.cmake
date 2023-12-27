@@ -14,7 +14,7 @@ set(CMAKE_SYSTEM_PROCESSOR arm64)
 set(TARGET_TRIPLE aarch64-linux-gnu)
 
 # Note: Make sure you have the software tools dir set in the project level CMakeLists.txt.
-set(RASPBERRYPI_SYSROOT    ${SOFTWARE_TOOLS_DIR}/cross-compile/raspberrypi/sysroot)
+set(RASPBERRYPI_SYSROOT    ${SOFTWARE_TOOLS_DIR}/crosscompile/raspberrypi/sysroot)
 
 # gcc8.3 compilers, linker, etc.
 set(CMAKE_C_COMPILER    ${TARGET_TRIPLE}-gcc)
