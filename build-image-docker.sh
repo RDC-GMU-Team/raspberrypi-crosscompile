@@ -10,6 +10,6 @@ if docker images | grep -q raspberrypi-build; then
 fi
 
 echo "Creating new image..."
-docker build --build-arg UID=$(id -u) -t raspberrypi-build docker-crosscompile/.
+docker build --build-arg UID=$(id -u) --build-arg USER=${USER} -t raspberrypi-build docker-crosscompile/.
 
 echo "Completed."
